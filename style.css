@@ -72,3 +72,29 @@ header { display: flex; justify-content: space-between; margin-bottom: 25px; bor
 /* Acid Trip Mode Animation */
 .mode-TRIP { animation: acid-flash 0.5s infinite; filter: hue-rotate(90deg) contrast(1.2); }
 @keyframes acid-flash { 0% { opacity: 1; } 50% { opacity: 0.98; } }
+/* Neue Farbe für das Drone-Modul (Deep Purple/Pink) */
+:root {
+  --acc-drone: #ff007f;
+}
+
+.drone { border-top: 4px solid var(--acc-drone); background: rgba(20, 0, 15, 0.8); }
+
+/* Master Section Style */
+#master-controls {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg-inset);
+  border-top: 2px dashed var(--border);
+  margin-top: 20px;
+}
+
+/* Loop-Animation für den Sequenzer */
+.step-btn.active {
+  animation: step-glow 0.2s ease-out;
+}
+
+@keyframes step-glow {
+  from { box-shadow: 0 0 20px var(--acc-core); transform: scale(1.1); }
+  to { box-shadow: 0 0 5px var(--acc-core); transform: scale(1); }
+}
