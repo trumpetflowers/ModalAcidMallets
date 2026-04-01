@@ -110,7 +110,63 @@ const S = {
     drums:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]
   }
 };
+<div class="panel drone" id="p-drone">
+  <div class="ph"><span class="ph-dot"></span>AMBIENT DRONE <button class="pwr-btn active" data-t="drone">ON</button></div>
+  <div class="knob-row">
+    <div class="knob-group">
+      <div class="knob c-fx" data-id="drn-tune" data-min="1" data-max="21000" data-val="100"><div class="k-needle"></div></div>
+      <div class="k-label">TUNE HZ</div>
+    </div>
+    <div class="knob-group">
+      <div class="knob c-fx" data-id="drn-detune" data-min="0" data-max="100" data-val="20"><div class="k-needle"></div></div>
+      <div class="k-label">BEAT/EVOLVE</div>
+    </div>
+  </div>
+</div>
 
+<div id="master-controls">
+  <div class="knob-group">
+    <div class="knob c-core" data-id="global-tune" data-min="1" data-max="21000" data-val="440"><div class="k-needle"></div></div>
+    <div class="k-label">GLOBAL TUNE (Hz)</div>
+  </div>
+</div>
+
+<script>
+// AUDIO ENGINE ERWEITERUNG
+let droneOscs = [];
+
+function playDrone() {
+  if(!S.pwr.drone || !ctx) return;
+  // Drone nutzt 3 Oszillatoren für Schwebungen
+  const baseFreq = S.params['drn-tune'] * (S.params['global-tune'] / 440);
+  const detune = S.params['drn-detune'] / 10;
+  
+  [0, detune, detune * -0.5].forEach(fOff => {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.frequency.setValueAtTime(baseFreq + fOff, ctx.currentTime);
+    g.gain.setValueAtTime(0.05, ctx.currentTime);
+    osc.connect(g); g.connect(master);
+    osc.start();
+    droneOscs.push({osc, g});
+  });
+}
+
+// Update der Tuning-Logik im Scheduler
+function scheduler() {
+  while(nextT < ctx.currentTime + 0.1) {
+    const globalMult = S.params['global-tune'] / 440;
+    
+    if(S.seq.drums[S.step]) playKick(nextT);
+    if(S.seq.acid[S.step]) {
+      // Acid Tuning bezieht Global Tuning mit ein
+      let freq = (55 * globalMult) + (S.params['acid-tune'] || 0);
+      playAcid(nextT, freq);
+    }
+    // ... restliche Sequenzer Logik
+  }
+}
+</script>
 function initAudio() {
   if (ctx) return;
   ctx = new (window.AudioContext || window.webkitAudioContext)();
