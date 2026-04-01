@@ -1,77 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
+/* Dein Design-System (Erhalten) */
 :root {
   --bg-main: #06060e;
   --bg-panel: #0a0a16;
   --border: #1e1e3a;
-  --acc-exc: #e8760a;  /* Amber */
-  --acc-core: #00d4aa; /* Teal */
-  --acc-fx: #aa66ff;   /* Violet */
-  --acc-mod: #44cc44;  /* Green */
+  --acc-exc: #e8760a;
+  --acc-core: #00d4aa;
+  --acc-fx: #aa66ff;
+  --acc-mod: #44cc44;
   --text: #e0e0ff;
 }
 
 body {
-  background: var(--bg-main);
-  color: var(--text);
+  background: var(--bg-main); color: var(--text);
   font-family: 'Share Tech Mono', monospace;
   margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
 }
 
 #app {
   width: 860px; background: #000; border: 2px solid var(--border);
-  padding: 20px; border-radius: 10px; box-shadow: 0 0 50px rgba(0, 212, 170, 0.1);
+  padding: 25px; border-radius: 12px; box-shadow: 0 0 60px rgba(0, 212, 170, 0.05);
 }
 
-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
-.logo-main { font-size: 20px; color: var(--acc-core); text-shadow: 0 0 10px var(--acc-core); }
-.logo-tag { font-size: 9px; opacity: 0.5; display: block; }
-
+/* Header & Panels */
+header { display: flex; justify-content: space-between; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
 #main { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+.panel { background: var(--bg-panel); border: 1px solid var(--border); padding: 15px; border-radius: 6px; position: relative; }
 
-.panel { background: var(--bg-panel); border: 1px solid var(--border); padding: 15px; border-radius: 5px; position: relative; }
-.ph { font-size: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a1a30; }
+/* Panel Akzente */
+.exc { border-top: 4px solid var(--acc-exc); }
+.core { border-top: 4px solid var(--acc-core); }
+.mod { border-top: 4px solid var(--acc-mod); }
+.fx { border-top: 4px solid var(--acc-fx); }
 
+.ph { font-size: 10px; letter-spacing: 1px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+
+/* Power Buttons (Retro Style) */
 .pwr-btn {
-  background: #111; color: #444; border: 1px solid #333; font-size: 8px; 
-  padding: 2px 5px; cursor: pointer; border-radius: 2px;
+  background: #111; color: #444; border: 1px solid #333; font-size: 8px;
+  padding: 2px 6px; cursor: pointer; transition: all 0.2s; border-radius: 2px;
 }
-.pwr-btn.active { color: #fff; box-shadow: 0 0 8px currentColor; border-color: #fff; }
+.pwr-btn.active { color: #fff; box-shadow: 0 0 10px currentColor; border-color: #fff; }
 
-/* Akzentfarben */
-.exc { border-top: 3px solid var(--acc-exc); }
-.core { border-top: 3px solid var(--acc-core); }
-.mod { border-top: 3px solid var(--acc-mod); }
-.fx { border-top: 3px solid var(--acc-fx); }
-
-/* Knobs */
+/* Custom Knobs (Dein Look) */
 .knob {
-  width: 40px; height: 40px; background: #1a1a2a; border-radius: 50%;
-  border: 2px solid var(--border); position: relative; cursor: pointer;
-  transform: rotate(-120deg); transition: transform 0.1s;
+  width: 42px; height: 42px; background: #151525; border-radius: 50%;
+  border: 2px solid var(--border); position: relative; cursor: ns-resize;
+  transition: transform 0.05s linear;
 }
 .k-needle {
-  width: 2px; height: 15px; background: #fff; position: absolute;
-  top: 5px; left: 19px; border-radius: 2px;
+  width: 2px; height: 16px; background: #fff; position: absolute;
+  top: 4px; left: 18px; border-radius: 2px;
 }
-.k-label { font-size: 8px; text-align: center; margin-top: 8px; opacity: 0.7; }
+.k-label { font-size: 9px; text-align: center; margin-top: 10px; opacity: 0.6; }
 .knob-row { display: flex; justify-content: space-around; }
+
+/* Sequencer */
+#seq-grid { margin-top: 30px; display: flex; flex-direction: column; gap: 6px; }
+.seq-row { display: flex; gap: 5px; }
+.step-btn {
+  flex: 1; height: 14px; background: #0a0a1a; border: 1px solid var(--border); cursor: pointer;
+}
+.step-btn.on { background: #222; border-color: #444; }
+.step-btn.active { background: var(--acc-core); box-shadow: 0 0 15px var(--acc-core); }
 
 /* Play Button */
 .play-btn {
-  background: var(--acc-core); border: none; color: #000; font-weight: bold;
-  padding: 8px 20px; border-radius: 3px; cursor: pointer;
+  background: var(--acc-core); border: none; color: #000; font-weight: 900;
+  padding: 10px 25px; border-radius: 4px; cursor: pointer;
 }
 
-/* Sequencer */
-#seq-grid { margin-top: 30px; display: flex; flex-direction: column; gap: 5px; }
-.seq-row { display: flex; gap: 4px; }
-.step-btn {
-  flex: 1; height: 12px; background: #0a0a16; border: 1px solid #1a1a30; cursor: pointer;
-}
-.step-btn.on { background: #333; border-color: #555; }
-.step-btn.active { background: var(--acc-core); box-shadow: 0 0 15px var(--acc-core); }
-
-/* Acid Modes */
-.mode-TRIP { animation: acid-shake 0.2s infinite; filter: hue-rotate(45deg); }
-@keyframes acid-shake { 0% { transform: scale(1); } 50% { transform: scale(1.005); } }
+/* Acid Trip Mode Animation */
+.mode-TRIP { animation: acid-flash 0.5s infinite; filter: hue-rotate(90deg) contrast(1.2); }
+@keyframes acid-flash { 0% { opacity: 1; } 50% { opacity: 0.98; } }
