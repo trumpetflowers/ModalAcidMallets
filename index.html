@@ -1,269 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=900, initial-scale=1.0">
-  <title>Modal Acid Mallets - Retro Edition</title>
+  <title>Dark Synth UI</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
 
-  <header id="hdr">
-    <div class="logo-wrap">
-      <span class="logo-main">MODAL ACID MALLETS</span>
-      <span class="logo-tag">CONSCIOUS GROOVE INSTRUMENT v1.0</span>
-    </div>
-    <div class="transport">
-      <button class="play-btn" id="playBtn">START</button>
-      <div class="bpm-box" id="bpmBox">124 BPM</div>
-    </div>
-    <div class="mode-row">
-      <button class="mode-btn active" data-m="PLAY">PLAY</button>
-      <button class="mode-btn" data-m="DRIFT">DRIFT</button>
-      <button class="mode-btn" data-m="TRIP">TRIP</button>
-    </div>
-  </header>
+<div class="app">
+  <h1>Dark Synth</h1>
 
-  <div id="main">
-    <div class="panel exc" id="p-mallet">
-      <div class="ph">
-        <span class="ph-dot"></span>MALLETS
-        <button class="pwr-btn active" data-t="mallet">ON</button>
-      </div>
-      <div class="knob-row">
-        <div class="knob-group">
-          <div class="knob c-exc" data-id="mlt-decay" data-min="0" data-max="100" data-val="40"><div class="k-needle"></div></div>
-          <div class="k-label">DECAY</div>
-        </div>
-        <div class="knob-group">
-          <div class="knob c-exc" data-id="mlt-tone" data-min="0" data-max="100" data-val="70"><div class="k-needle"></div></div>
-          <div class="k-label">TONE</div>
-        </div>
-      </div>
+  <div class="panel">
+    <div class="knob-container">
+      <label>Cutoff</label>
+      <input type="range" min="0" max="100" value="50">
     </div>
 
-    <div class="panel core" id="p-acid">
-      <div class="ph">
-        <span class="ph-dot"></span>ACID BASS
-        <button class="pwr-btn active" data-t="acid">ON</button>
-      </div>
-      <div class="knob-row">
-        <div class="knob-group">
-          <div class="knob c-core" data-id="acid-cut" data-min="0" data-max="100" data-val="50"><div class="k-needle"></div></div>
-          <div class="k-label">CUTOFF</div>
-        </div>
-        <div class="knob-group">
-          <div class="knob c-core" data-id="acid-res" data-min="0" data-max="100" data-val="70"><div class="k-needle"></div></div>
-          <div class="k-label">RESONANCE</div>
-        </div>
-      </div>
+    <div class="knob-container">
+      <label>Resonance</label>
+      <input type="range" min="0" max="100" value="20">
     </div>
 
-    <div class="panel mod" id="p-drums">
-      <div class="ph">
-        <span class="ph-dot"></span>DRUMS
-        <button class="pwr-btn active" data-t="drums">ON</button>
-      </div>
-      <div class="knob-row">
-        <div class="knob-group">
-          <div class="knob c-mod" data-id="drm-kick" data-min="0" data-max="100" data-val="80"><div class="k-needle"></div></div>
-          <div class="k-label">KICK</div>
-        </div>
-        <div class="knob-group">
-          <div class="knob c-mod" data-id="drm-snare" data-min="0" data-max="100" data-val="40"><div class="k-needle"></div></div>
-          <div class="k-label">SNARE</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel fx" id="p-fx">
-      <div class="ph"><span class="ph-dot"></span>AMBIENT FX</div>
-      <div class="knob-row">
-        <div class="knob-group">
-          <div class="knob c-fx" data-id="fx-space" data-min="0" data-max="100" data-val="30"><div class="k-needle"></div></div>
-          <div class="k-label">SPACE</div>
-        </div>
-        <div class="knob-group">
-          <div class="knob c-fx" data-id="fx-echo" data-min="0" data-max="100" data-val="40"><div class="k-needle"></div></div>
-          <div class="k-label">ECHO</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="seq-container">
-    <div id="seq-grid"></div>
+    <button id="playBtn">Play</button>
   </div>
 </div>
 
 <script>
-/** ── AUDIO ENGINE (Web Audio API) ── **/
-let ctx, master, delay, verb;
-const S = {
-  playing: false, bpm: 124, step: 0,
-  pwr: { mallet: true, acid: true, drums: true },
-  params: {},
-  seq: {
-    mallet: [1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0],
-    acid:   [1,1,0,1,1,0,1,0,1,1,0,1,1,0,1,1],
-    drums:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]
-  }
+const btn = document.getElementById("playBtn");
+let playing = false;
+
+btn.onclick = () => {
+  playing = !playing;
+  btn.innerText = playing ? "Stop" : "Play";
 };
-<div class="panel drone" id="p-drone">
-  <div class="ph"><span class="ph-dot"></span>AMBIENT DRONE <button class="pwr-btn active" data-t="drone">ON</button></div>
-  <div class="knob-row">
-    <div class="knob-group">
-      <div class="knob c-fx" data-id="drn-tune" data-min="1" data-max="21000" data-val="100"><div class="k-needle"></div></div>
-      <div class="k-label">TUNE HZ</div>
-    </div>
-    <div class="knob-group">
-      <div class="knob c-fx" data-id="drn-detune" data-min="0" data-max="100" data-val="20"><div class="k-needle"></div></div>
-      <div class="k-label">BEAT/EVOLVE</div>
-    </div>
-  </div>
-</div>
-
-<div id="master-controls">
-  <div class="knob-group">
-    <div class="knob c-core" data-id="global-tune" data-min="1" data-max="21000" data-val="440"><div class="k-needle"></div></div>
-    <div class="k-label">GLOBAL TUNE (Hz)</div>
-  </div>
-</div>
-
-<script>
-// AUDIO ENGINE ERWEITERUNG
-let droneOscs = [];
-
-function playDrone() {
-  if(!S.pwr.drone || !ctx) return;
-  // Drone nutzt 3 Oszillatoren für Schwebungen
-  const baseFreq = S.params['drn-tune'] * (S.params['global-tune'] / 440);
-  const detune = S.params['drn-detune'] / 10;
-  
-  [0, detune, detune * -0.5].forEach(fOff => {
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    osc.frequency.setValueAtTime(baseFreq + fOff, ctx.currentTime);
-    g.gain.setValueAtTime(0.05, ctx.currentTime);
-    osc.connect(g); g.connect(master);
-    osc.start();
-    droneOscs.push({osc, g});
-  });
-}
-
-// Update der Tuning-Logik im Scheduler
-function scheduler() {
-  while(nextT < ctx.currentTime + 0.1) {
-    const globalMult = S.params['global-tune'] / 440;
-    
-    if(S.seq.drums[S.step]) playKick(nextT);
-    if(S.seq.acid[S.step]) {
-      // Acid Tuning bezieht Global Tuning mit ein
-      let freq = (55 * globalMult) + (S.params['acid-tune'] || 0);
-      playAcid(nextT, freq);
-    }
-    // ... restliche Sequenzer Logik
-  }
-}
 </script>
-function initAudio() {
-  if (ctx) return;
-  ctx = new (window.AudioContext || window.webkitAudioContext)();
-  master = ctx.createGain(); master.gain.value = 0.5;
-  
-  delay = ctx.createDelay();
-  delay.delayTime.value = 0.375;
-  const feed = ctx.createGain(); feed.gain.value = 0.3;
-  delay.connect(feed); feed.connect(delay);
 
-  master.connect(ctx.destination);
-  delay.connect(master);
-}
-
-function playKick(t) {
-  if(!S.pwr.drums) return;
-  const o = ctx.createOscillator(); const g = ctx.createGain();
-  o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(0.01, t+0.5);
-  g.gain.setValueAtTime(S.params['drm-kick']/100, t); g.gain.exponentialRampToValueAtTime(0.001, t+0.5);
-  o.connect(g); g.connect(master); o.start(t); o.stop(t+0.5);
-}
-
-function playAcid(t, f) {
-  if(!S.pwr.acid) return;
-  const o = ctx.createOscillator(); const flt = ctx.createBiquadFilter(); const g = ctx.createGain();
-  o.type='sawtooth'; o.frequency.setValueAtTime(f, t);
-  flt.type='lowpass'; flt.frequency.setValueAtTime(S.params['acid-cut']*20, t);
-  flt.Q.value = S.params['acid-res']/5;
-  g.gain.setValueAtTime(0.2, t); g.gain.exponentialRampToValueAtTime(0.001, t+0.2);
-  o.connect(flt); flt.connect(g); g.connect(master); 
-  if(S.params['fx-echo'] > 20) g.connect(delay);
-  o.start(t); o.stop(t+0.2);
-}
-
-let nextT = 0;
-function scheduler() {
-  while(nextT < ctx.currentTime + 0.1) {
-    if(S.seq.drums[S.step]) playKick(nextT);
-    if(S.seq.acid[S.step]) playAcid(nextT, 55 + (S.step%3)*12);
-    updateUI(S.step);
-    nextT += 60 / S.bpm / 4;
-    S.step = (S.step + 1) % 16;
-  }
-}
-
-function updateUI(s) {
-  document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll(`[data-idx="${s}"]`).forEach(b => b.classList.add('active'));
-}
-
-/** ── UI LOGIC (RETAINING YOUR DESIGN) ── **/
-document.addEventListener('DOMContentLoaded', () => {
-  // Build Grid
-  const grid = document.getElementById('seq-grid');
-  ['mallet','acid','drums'].forEach(layer => {
-    const row = document.createElement('div'); row.className = 'seq-row';
-    for(let i=0; i<16; i++) {
-      const b = document.createElement('div'); b.className = 'step-btn';
-      if(S.seq[layer][i]) b.classList.add('on');
-      b.dataset.idx = i;
-      b.onclick = () => { S.seq[layer][i] = !S.seq[layer][i]; b.classList.toggle('on'); };
-      row.appendChild(b);
-    }
-    grid.appendChild(row);
-  });
-
-  // Knobs (Direct mapping to your DIV-based Knobs)
-  document.querySelectorAll('.knob').forEach(k => {
-    S.params[k.dataset.id] = k.dataset.val;
-    k.style.transform = `rotate(${(k.dataset.val * 2.4) - 120}deg)`;
-    k.onmousedown = (e) => {
-      let startY = e.pageY;
-      const move = (ev) => {
-        let diff = startY - ev.pageY;
-        let val = Math.min(100, Math.max(0, parseInt(S.params[k.dataset.id]) + diff));
-        S.params[k.dataset.id] = val;
-        k.style.transform = `rotate(${(val * 2.4) - 120}deg)`;
-        startY = ev.pageY;
-      };
-      window.onmousemove = move;
-      window.onmouseup = () => window.onmousemove = null;
-    };
-  });
-
-  // Power Buttons
-  document.querySelectorAll('.pwr-btn').forEach(b => {
-    b.onclick = () => { S.pwr[b.dataset.t] = !S.pwr[b.dataset.t]; b.classList.toggle('active'); };
-  });
-
-  // Play/Stop
-  document.getElementById('playBtn').onclick = (e) => {
-    initAudio(); if(ctx.state === 'suspended') ctx.resume();
-    S.playing = !S.playing;
-    if(S.playing) { nextT = ctx.currentTime; S.timer = setInterval(scheduler, 25); e.target.innerText = "STOP"; }
-    else { clearInterval(S.timer); e.target.innerText = "START"; }
-  };
-});
-</script>
 </body>
 </html>
