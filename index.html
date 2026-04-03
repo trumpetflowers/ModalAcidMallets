@@ -1,39 +1,32 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Dark Synth UI</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Pro Dark Synth</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app">
-  <h1>Dark Synth</h1>
+  <h1>PRO DARK SYNTH</h1>
 
-  <div class="panel">
-    <div class="knob-container">
-      <label>Cutoff</label>
-      <input type="range" min="0" max="100" value="50">
-    </div>
-
-    <div class="knob-container">
-      <label>Resonance</label>
-      <input type="range" min="0" max="100" value="20">
-    </div>
-
-    <button id="playBtn">Play</button>
+  <div class="top-bar">
+    <button id="play">▶</button>
+    <label>BPM <input id="bpm" type="number" value="120"></label>
   </div>
+
+  <div class="knobs">
+    <div class="knob"><label>Cutoff</label><input type="range" id="cutoff"></div>
+    <div class="knob"><label>Reso</label><input type="range" id="reso"></div>
+    <div class="knob"><label>Drive</label><input type="range" id="drive"></div>
+    <div class="knob"><label>Delay</label><input type="range" id="delay"></div>
+  </div>
+
+  <div class="sequencer" id="seq"></div>
+
+  <canvas id="viz"></canvas>
 </div>
 
-<script>
-const btn = document.getElementById("playBtn");
-let playing = false;
-
-btn.onclick = () => {
-  playing = !playing;
-  btn.innerText = playing ? "Stop" : "Play";
-};
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
